@@ -7,8 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F01FDA0C2C64FBE000FAA5B4 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = F01FDA0B2C64FBE000FAA5B4 /* Event.swift */; };
+		F01FDA112C65083100FAA5B4 /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F01FDA102C65083100FAA5B4 /* CalendarView.swift */; };
 		F040062C2C64A56400DAE6B6 /* EventSchedulerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F040062B2C64A56400DAE6B6 /* EventSchedulerApp.swift */; };
-		F040062E2C64A56400DAE6B6 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F040062D2C64A56400DAE6B6 /* ContentView.swift */; };
+		F040062E2C64A56400DAE6B6 /* TimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F040062D2C64A56400DAE6B6 /* TimelineView.swift */; };
 		F04006302C64A56400DAE6B6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F040062F2C64A56400DAE6B6 /* Assets.xcassets */; };
 		F04006332C64A56500DAE6B6 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F04006322C64A56500DAE6B6 /* Preview Assets.xcassets */; };
 		F040063A2C64AC9D00DAE6B6 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = F04006392C64AC9D00DAE6B6 /* GoogleService-Info.plist */; };
@@ -16,9 +18,11 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		F01FDA0B2C64FBE000FAA5B4 /* Event.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
+		F01FDA102C65083100FAA5B4 /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
 		F04006282C64A56400DAE6B6 /* EventScheduler.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EventScheduler.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F040062B2C64A56400DAE6B6 /* EventSchedulerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventSchedulerApp.swift; sourceTree = "<group>"; };
-		F040062D2C64A56400DAE6B6 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		F040062D2C64A56400DAE6B6 /* TimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineView.swift; sourceTree = "<group>"; };
 		F040062F2C64A56400DAE6B6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F04006322C64A56500DAE6B6 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		F04006392C64AC9D00DAE6B6 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -55,8 +59,9 @@
 		F040062A2C64A56400DAE6B6 /* EventScheduler */ = {
 			isa = PBXGroup;
 			children = (
+				F040063E2C64C8DB00DAE6B6 /* Model */,
+				F040063F2C64C98500DAE6B6 /* View */,
 				F040062B2C64A56400DAE6B6 /* EventSchedulerApp.swift */,
-				F040062D2C64A56400DAE6B6 /* ContentView.swift */,
 				F040062F2C64A56400DAE6B6 /* Assets.xcassets */,
 				F04006392C64AC9D00DAE6B6 /* GoogleService-Info.plist */,
 				F04006312C64A56500DAE6B6 /* Preview Content */,
@@ -70,6 +75,23 @@
 				F04006322C64A56500DAE6B6 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		F040063E2C64C8DB00DAE6B6 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				F01FDA0B2C64FBE000FAA5B4 /* Event.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		F040063F2C64C98500DAE6B6 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				F040062D2C64A56400DAE6B6 /* TimelineView.swift */,
+				F01FDA102C65083100FAA5B4 /* CalendarView.swift */,
+			);
+			path = View;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -149,7 +171,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F040062E2C64A56400DAE6B6 /* ContentView.swift in Sources */,
+				F01FDA112C65083100FAA5B4 /* CalendarView.swift in Sources */,
+				F040062E2C64A56400DAE6B6 /* TimelineView.swift in Sources */,
+				F01FDA0C2C64FBE000FAA5B4 /* Event.swift in Sources */,
 				F040062C2C64A56400DAE6B6 /* EventSchedulerApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
