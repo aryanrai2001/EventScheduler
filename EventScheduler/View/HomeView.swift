@@ -11,22 +11,15 @@ import SwiftUI
 final class EventViewModel: ObservableObject {
     
     @Published var events: [Event] = []
-    @Published var allDayEvents: [Event] = []
     
     func startListening( date: Date?) {
         guard let date else {
             return
         }
         events = []
-        allDayEvents = []
         DataService.shared.addListenerForEvent(date: date) { events in
             DispatchQueue.main.async {
                 self.events = events
-            }
-        }
-        DataService.shared.addListenerForAllDayEvent(date: date) { events in
-            DispatchQueue.main.async {
-                self.allDayEvents = events
             }
         }
     }
@@ -41,7 +34,7 @@ struct HomeView: View {
     
     @State private var selectedYear: Int? = nil
     @State private var selectedMonth: Int? = nil
-    @State private var selectedDay: Int = 0
+    @State private var selectedDay: Int = 1
     
     var body: some View {
         
@@ -216,11 +209,9 @@ struct HomeView: View {
                                             return event.starts < endTime && event.ends > startTime
                                         }
                                         
-                                        let allEvents = viewModel.allDayEvents + filteredEvents
-                                        
-                                        ForEach(allEvents.indices, id:\.self) {
+                                        ForEach(filteredEvents.indices, id:\.self) {
                                             index in
-                                            EventIndicatorView(event: allEvents[index], xOffset: index, yStart: yStart, yEnd: yEnd)
+                                            EventIndicatorView(event: filteredEvents[index], xOffset: index, yStart: yStart, yEnd: yEnd)
                                         }
                                     }
                                     .frame(width: CGFloat(viewModel.events.count) * 100)
@@ -287,16 +278,9 @@ struct HomeView: View {
     }
     
     func getTimePosition(time: Date) -> Int {
-        var hours = Calendar.current.component(.hour, from: time)
-        var minutes = Calendar.current.component(.minute, from: time)
-        if time < getDate()! {
-            hours = 0
-            minutes = 0
-        } else if time >= Calendar.current.date(byAdding: .day, value: 1, to: getDate()!)! {
-            hours = 23
-            minutes = 59
-        }
-        return hours * 60 + minutes
+        let hours = Calendar.current.component(.hour, from: time)
+        let minutes = Calendar.current.component(.minute, from: time)
+        return  max(min((hours * 60 + minutes), 1440), 0)
     }
     
     func getPositionTime(position: Int) -> Date {

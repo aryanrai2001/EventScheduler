@@ -14,7 +14,6 @@ final class DataService: ObservableObject {
     private init() {}
     
     private var eventListenerRegistration: ListenerRegistration?
-    private var allDayEventListenerRegistration: ListenerRegistration?
     
     func createNewEvent(event: Event) async throws -> String {
         let eventDocument = Firestore.firestore().collection("events").document()
@@ -28,31 +27,24 @@ final class DataService: ObservableObject {
         let start = calendar.date(from: components)!
         let end = calendar.date(byAdding: .day, value: 1, to: start)!
         eventListenerRegistration?.remove()
-        eventListenerRegistration = Firestore.firestore().collection("events").whereField("starts", isGreaterThan: start).whereField("ends", isLessThan: end).addSnapshotListener{ querySnapshot, error in
+        eventListenerRegistration = Firestore.firestore().collection("events").whereField("starts", isLessThan: end).whereField("ends", isGreaterThan: start).addSnapshotListener{ querySnapshot, error in
             guard let documents = querySnapshot?.documents else {
                 return
             }
-            let events: [Event] = documents.compactMap { documentSnapshot in
+            let fetchedEvents: [Event] = documents.compactMap { documentSnapshot in
                 try? documentSnapshot.data(as: Event.self)
             }
-            completion(events)
-        }
-    }
-    
-    func addListenerForAllDayEvent(date: Date, completion: @escaping (_ events: [Event]) -> Void) {
-        let calendar = Calendar.current
-        let components = calendar.dateComponents([.year, .month, .day], from: date)
-        let start = calendar.date(from: components)!
-        let end = calendar.date(byAdding: .day, value: 1, to: start)!
-        allDayEventListenerRegistration?.remove()
-        allDayEventListenerRegistration = Firestore.firestore().collection("events").whereField("starts", isLessThan: start).whereField("ends", isGreaterThan: end).addSnapshotListener{ querySnapshot, error in
-            guard let documents = querySnapshot?.documents else {
-                return
+            var events = Set<Event>()
+            for event in fetchedEvents {
+                if event.starts > start && event.ends < end {
+                    events.insert(event)
+                } else if event.starts <= st{
+                    
+                }
             }
-            let events: [Event] = documents.compactMap { documentSnapshot in
-                try? documentSnapshot.data(as: Event.self)
-            }
-            completion(events)
+            completion(events.sorted(by: { event1, event2 in
+                event1.starts < event2.starts
+            }))
         }
     }
 }

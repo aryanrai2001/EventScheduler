@@ -30,10 +30,18 @@ enum EventColor: Codable, CaseIterable {
     }
 }
 
-struct Event: Identifiable, Codable {
+struct Event: Identifiable, Codable, Hashable  {
     @DocumentID var id: String?
     var title: String
     var starts: Date
     var ends: Date
     var color: EventColor
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+        hasher.combine(title)
+        hasher.combine(starts)
+        hasher.combine(ends)
+        hasher.combine(color)
+    }
 }
