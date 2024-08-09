@@ -9,8 +9,10 @@
 /* Begin PBXBuildFile section */
 		F01FDA0C2C64FBE000FAA5B4 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = F01FDA0B2C64FBE000FAA5B4 /* Event.swift */; };
 		F01FDA112C65083100FAA5B4 /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F01FDA102C65083100FAA5B4 /* CalendarView.swift */; };
+		F01FDA132C65E33900FAA5B4 /* AddNewEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F01FDA122C65E33900FAA5B4 /* AddNewEvent.swift */; };
+		F01FDA182C66347300FAA5B4 /* DataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F01FDA172C66347300FAA5B4 /* DataService.swift */; };
 		F040062C2C64A56400DAE6B6 /* EventSchedulerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F040062B2C64A56400DAE6B6 /* EventSchedulerApp.swift */; };
-		F040062E2C64A56400DAE6B6 /* TimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F040062D2C64A56400DAE6B6 /* TimelineView.swift */; };
+		F040062E2C64A56400DAE6B6 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F040062D2C64A56400DAE6B6 /* HomeView.swift */; };
 		F04006302C64A56400DAE6B6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F040062F2C64A56400DAE6B6 /* Assets.xcassets */; };
 		F04006332C64A56500DAE6B6 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F04006322C64A56500DAE6B6 /* Preview Assets.xcassets */; };
 		F040063A2C64AC9D00DAE6B6 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = F04006392C64AC9D00DAE6B6 /* GoogleService-Info.plist */; };
@@ -20,9 +22,11 @@
 /* Begin PBXFileReference section */
 		F01FDA0B2C64FBE000FAA5B4 /* Event.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
 		F01FDA102C65083100FAA5B4 /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
+		F01FDA122C65E33900FAA5B4 /* AddNewEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNewEvent.swift; sourceTree = "<group>"; };
+		F01FDA172C66347300FAA5B4 /* DataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataService.swift; sourceTree = "<group>"; };
 		F04006282C64A56400DAE6B6 /* EventScheduler.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EventScheduler.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F040062B2C64A56400DAE6B6 /* EventSchedulerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventSchedulerApp.swift; sourceTree = "<group>"; };
-		F040062D2C64A56400DAE6B6 /* TimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineView.swift; sourceTree = "<group>"; };
+		F040062D2C64A56400DAE6B6 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		F040062F2C64A56400DAE6B6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F04006322C64A56500DAE6B6 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		F04006392C64AC9D00DAE6B6 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -40,6 +44,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F01FDA162C66345900FAA5B4 /* Service */ = {
+			isa = PBXGroup;
+			children = (
+				F01FDA172C66347300FAA5B4 /* DataService.swift */,
+			);
+			path = Service;
+			sourceTree = "<group>";
+		};
 		F040061F2C64A56300DAE6B6 = {
 			isa = PBXGroup;
 			children = (
@@ -59,6 +71,7 @@
 		F040062A2C64A56400DAE6B6 /* EventScheduler */ = {
 			isa = PBXGroup;
 			children = (
+				F01FDA162C66345900FAA5B4 /* Service */,
 				F040063E2C64C8DB00DAE6B6 /* Model */,
 				F040063F2C64C98500DAE6B6 /* View */,
 				F040062B2C64A56400DAE6B6 /* EventSchedulerApp.swift */,
@@ -88,8 +101,9 @@
 		F040063F2C64C98500DAE6B6 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				F040062D2C64A56400DAE6B6 /* TimelineView.swift */,
+				F040062D2C64A56400DAE6B6 /* HomeView.swift */,
 				F01FDA102C65083100FAA5B4 /* CalendarView.swift */,
+				F01FDA122C65E33900FAA5B4 /* AddNewEvent.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -172,7 +186,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				F01FDA112C65083100FAA5B4 /* CalendarView.swift in Sources */,
-				F040062E2C64A56400DAE6B6 /* TimelineView.swift in Sources */,
+				F01FDA132C65E33900FAA5B4 /* AddNewEvent.swift in Sources */,
+				F040062E2C64A56400DAE6B6 /* HomeView.swift in Sources */,
+				F01FDA182C66347300FAA5B4 /* DataService.swift in Sources */,
 				F01FDA0C2C64FBE000FAA5B4 /* Event.swift in Sources */,
 				F040062C2C64A56400DAE6B6 /* EventSchedulerApp.swift in Sources */,
 			);

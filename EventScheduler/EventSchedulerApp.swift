@@ -22,7 +22,7 @@ struct EventSchedulerApp: App {
     
     var body: some Scene {
         WindowGroup {
-            TimelineView()
+            HomeView()
                 .preferredColorScheme(.dark)
                 .background(.themeBackground)
         }

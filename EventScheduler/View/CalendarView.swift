@@ -11,7 +11,7 @@ struct CalendarView: View {
     
     @Binding var selectedYear: Int?
     @Binding var selectedMonth: Int?
-    @Binding var selectedDay: Int?
+    @Binding var selectedDay: Int
     @Binding var compact: Bool
     
     var onPressAdd: () -> Void = {}
@@ -28,7 +28,16 @@ struct CalendarView: View {
                     HStack(alignment: .bottom, spacing: 0) {
                         YearHeading(selectedYear: selectedYear)
                         Spacer()
-                        CompactButton()
+                        HStack {
+                            CompactButton()
+                            Button {
+                                onPressAdd()
+                            } label: {
+                                Image(systemName: "plus")
+                                    .foregroundColor(.themeOrange)
+                                    .font(.title2)
+                            }
+                        }
                     }
                 }
                 // Month
@@ -44,22 +53,16 @@ struct CalendarView: View {
                         Spacer()
                         
                         if compact {
-                            CompactButton()
-                        } else {
-                            Button {
-                                onPressAdd()
-                            } label: {
-                                if selectedDay != nil {
+                            HStack {
+                                CompactButton()
+                                Button {
+                                    onPressAdd()
+                                } label: {
                                     Image(systemName: "plus")
                                         .foregroundColor(.themeOrange)
                                         .font(.title2)
-                                } else {
-                                    Image(systemName: "plus")
-                                        .foregroundColor(Color.gray.opacity(0.5))
-                                        .font(.title2)
                                 }
                             }
-                            .disabled(selectedDay == nil)
                         }
                     }
                     //Day
@@ -93,9 +96,6 @@ struct CalendarView: View {
                 } else {
                     if self.selectedYear != nil && self.selectedMonth != nil {
                         compact = true
-                        if selectedDay == nil {
-                            selectedDay = 1
-                        }
                     }
                 }
             }
@@ -242,7 +242,7 @@ struct CalendarView: View {
                         withAnimation {
                             self.selectedYear = yearRangeStart + offset
                             self.selectedMonth = nil
-                            self.selectedDay = nil
+                            self.selectedDay = 1
                         }
                     }, label: {
                         Text(String(yearRangeStart + offset))
@@ -265,7 +265,7 @@ struct CalendarView: View {
                 Button(action: {
                     withAnimation {
                         self.selectedMonth = month
-                        self.selectedDay = nil
+                        self.selectedDay = 1
                     }
                 }, label: {
                     Text(Calendar.current.monthSymbols[month-1])
@@ -296,10 +296,6 @@ struct CalendarView: View {
         let nextMonthDays = Array(0..<(7-lastWeekday)).compactMap { offset in
             Calendar.current.date(byAdding: .day, value: offset+1, to: days.last!)
         }
-        
-        let lastWeek = ((days.count + nextMonthDays.count + prevMonthDays.count) / 7) - 1
-        let selectedWeek = ((selectedDay ?? 0) + prevMonthDays.count - 1) / 7
-        let weekStart = (selectedWeek * 7)
         
         VStack {
             if !compact {
@@ -332,7 +328,7 @@ struct CalendarView: View {
                         day in
                         Button(action: {
                             withAnimation {
-                                self.selectedDay = Int(day.formatted(.dateTime.day()))
+                                self.selectedDay = Int(day.formatted(.dateTime.day())) ?? 1
                             }
                         }, label: {
                             let date = day.formatted(.dateTime.day(.twoDigits))
@@ -370,7 +366,7 @@ struct CalendarView: View {
                                 
                                 Button(action: {
                                     withAnimation {
-                                        self.selectedDay = Int(day.formatted(.dateTime.day()))
+                                        self.selectedDay = Int(day.formatted(.dateTime.day())) ?? 1
                                     }
                                 }, label: {
                                     VStack {
@@ -387,6 +383,13 @@ struct CalendarView: View {
                                     .cornerRadius(5)
                                 })
                                 .id(Int(date))
+                            }
+                        }
+                        .onChange(of: selectedDay) {
+                            DispatchQueue.main.async {
+                                withAnimation(.easeInOut) {
+                                    proxy.scrollTo(selectedDay, anchor: .center)
+                                }
                             }
                         }
                         .onAppear {
@@ -406,6 +409,6 @@ struct CalendarView: View {
 //        print("Preview Test: Add Button Pressed")
 //    }
 //    .padding()
-    TimelineView()
+    HomeView()
         .background(.themeBackground)
 }
