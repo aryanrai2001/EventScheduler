@@ -136,21 +136,21 @@ struct HomeView: View {
                             VStack(alignment: .leading) {
                                 HStack(spacing: 5) {
                                     Image(systemName: "clock")
-                                        .foregroundStyle(.themeForeground)
+                                        .foregroundStyle(.themeLight)
                                         .font(.caption)
                                         .bold()
                                     Text("\(event.starts.formatted(date: .omitted, time: .shortened))")
-                                        .foregroundStyle(.themeForeground)
+                                        .foregroundStyle(.themeLight)
                                         .font(.caption)
                                         .bold()
                                 }
                                 HStack(spacing: 5)  {
                                     Image(systemName: "clock")
-                                        .foregroundStyle(.themeForeground)
+                                        .foregroundStyle(.themeLight)
                                         .font(.caption)
                                         .bold()
                                     Text("\(event.ends.formatted(date: .omitted, time: .shortened))")
-                                        .foregroundStyle(.themeForeground)
+                                        .foregroundStyle(.themeLight)
                                         .font(.caption)
                                         .bold()
                                 }
@@ -158,7 +158,7 @@ struct HomeView: View {
                             .padding(.leading, 15)
                             Spacer()
                             Text("\(event.title)")
-                                .foregroundStyle(.themeForeground)
+                                .foregroundStyle(.themeLight)
                                 .padding(.trailing, 15)
                         }
                     }
