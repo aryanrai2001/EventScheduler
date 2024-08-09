@@ -30,13 +30,13 @@ struct HomeView: View {
     @StateObject private var viewModel = EventViewModel()
     
     @State private var showAddEventForm: Bool = false
-    @State private var compactView: Bool = true
+    @State private var compactView: Bool = false
     
     @State private var selectedYear: Int? = nil
     @State private var selectedMonth: Int? = nil
     @State private var selectedDay: Int = 1
     
-    @State private var eventToEdit: UUID?
+    @State private var eventToEdit: Event?
     
     var body: some View {
         
@@ -88,15 +88,21 @@ struct HomeView: View {
                 }
             }
         }
-        .sheet(isPresented: $showAddEventForm) {
-            AddNewEvent(showAddEventForm: $showAddEventForm)
-        }
         .onAppear {
             selectedYear = Calendar.current.component(.year, from: Date.now)
             selectedMonth = Calendar.current.component(.month, from: Date.now)
             selectedDay = Calendar.current.component(.day, from: Date.now)
             viewModel.startListening(date: getDate())
         }
+        .sheet(isPresented: $showAddEventForm) {
+            AddEventView()
+        }
+        .sheet(item: $eventToEdit) {
+            eventToEdit = nil
+        } content: { event in
+            AddEventView(id: event.id, title: event.title, starts: event.starts, ends: event.ends, color: event.color)
+        }
+
     }
     
     @ViewBuilder
@@ -172,11 +178,21 @@ struct HomeView: View {
                         }
                     }
                     .onTapGesture {
-                        eventToEdit = event.id
+                        Task {
+                            let fetchedEvent = try await DataService.shared.getEvent(eventId: event.id)
+                            DispatchQueue.main.async {
+                                eventToEdit = fetchedEvent
+                            }
+                        }
                     }
                     .contextMenu {
                         Button {
-                            eventToEdit = event.id
+                            Task {
+                                let fetchedEvent = try await DataService.shared.getEvent(eventId: event.id)
+                                DispatchQueue.main.async {
+                                    eventToEdit = fetchedEvent
+                                }
+                            }
                         } label: {
                             Label("Edit Event", systemImage: "square.and.pencil")
                         }
@@ -325,29 +341,12 @@ struct HomeView: View {
             .frame(width: CGFloat(width - 3), height: CGFloat(height))
             .position(x: CGFloat(width * xOffset + width / 2), y: CGFloat(eventStartPos + height / 2))
             .onTapGesture {
-                eventToEdit = event.id
-            }
-            .contextMenu {
-                Button {
-                    eventToEdit = event.id
-                } label: {
-                    Label("Edit Event", systemImage: "square.and.pencil")
-                }
-                
-                Button(role: .destructive) {
-                    Task {
-                        try await DataService.shared.deleteEvent(eventId: event.id);
+                Task {
+                    let fetchedEvent = try await DataService.shared.getEvent(eventId: event.id)
+                    DispatchQueue.main.async {
+                        eventToEdit = fetchedEvent
                     }
-                } label: {
-                    Label("Delete Event", systemImage: "trash")
                 }
-            } preview: {
-                Text("\(event.title)")
-                    .padding()
-                    .background(event.color.value)
-                    .foregroundStyle(.themeLight)
-                    .font(.body)
-                    .cornerRadius(5)
             }
         }
     }

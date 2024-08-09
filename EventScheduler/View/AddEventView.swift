@@ -7,14 +7,19 @@
 
 import SwiftUI
 
-struct AddNewEvent: View {
+struct AddEventView: View {
 
-    @Binding var showAddEventForm: Bool
+    @Environment(\.presentationMode) var presentationMode
     
-    @State private var title: String = ""
-    @State private var starts: Date = Date.now
-    @State private var ends: Date = Date.now
-    @State private var color: EventColor = .red
+    @State var id: UUID?
+    @State var title: String = ""
+    @State var starts: Date = Date.now
+    @State var ends: Date = Date.now
+    @State var color: EventColor = .red
+    
+    private var minEndDate: Date {
+        Calendar.current.date(byAdding: .minute, value: 5, to: starts)!
+    }
     
     var body: some View {
         NavigationStack {
@@ -47,15 +52,18 @@ struct AddNewEvent: View {
                 
                 Section {
                     DatePicker("Starts", selection: $starts)
-                    DatePicker("Ends", selection: $ends)
+                    DatePicker("Ends", selection: $ends, in: minEndDate...)
+                        .onAppear {
+                            ends = minEndDate
+                        }
                 }
             }
-            .navigationTitle("New Event")
+            .navigationTitle("\(id == nil ? "New" : "Edit") Event")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button {
-                        showAddEventForm = false
+                        presentationMode.wrappedValue.dismiss()
                     } label: {
                         Text("Cancel")
                             .foregroundStyle(.red)
@@ -65,15 +73,19 @@ struct AddNewEvent: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         Task {
-                            try await DataService.shared.createNewEvent(event: Event(title: title, starts: starts, ends: ends, color: color))
+                            var event = Event(title: title, starts: starts, ends: ends, color: color)
+                            if let id {
+                                event.id = id
+                            }
+                            try await DataService.shared.createNewEvent(event: event)
                         }
-                        showAddEventForm = false
+                        presentationMode.wrappedValue.dismiss()
                     } label: {
                         if title.isEmpty {
-                            Text("Add")
+                            Text(id == nil ? "Add" : "Edit")
                                 .foregroundStyle(.gray)
                         } else {
-                            Text("Add")
+                            Text(id == nil ? "Add" : "Edit")
                         }
                     }
                     .disabled(title.isEmpty)
@@ -84,5 +96,5 @@ struct AddNewEvent: View {
 }
 
 #Preview {
-    AddNewEvent(showAddEventForm: .constant(true))
+    AddEventView()
 }

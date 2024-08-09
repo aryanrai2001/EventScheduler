@@ -45,6 +45,9 @@ final class DataService: ObservableObject {
     }
     
     func createNewEvent(event: Event) async throws {
+        
+        try await deleteEvent(eventId: event.id)
+        
         let days = extractDates(from: event.starts, to: event.ends)
         var events = [Event]()
         var currEvent = event
@@ -65,12 +68,36 @@ final class DataService: ObservableObject {
     }
     
     func deleteEvent(eventId: UUID) async throws {
-        let collection = Firestore.firestore().collection("events")
-        if let querySnapshot = try? await collection.whereField("id", isEqualTo: eventId.uuidString).getDocuments() {
-            for document in querySnapshot.documents {
-                try await document.reference.delete()
+        if let querySnapshot = try? await Firestore.firestore().collection("events").whereField("id", isEqualTo: eventId.uuidString).getDocuments(){
+            for documentSnapshot in querySnapshot.documents {
+                try await documentSnapshot.reference.delete()
             }
         }
+    }
+    
+    func getEvent(eventId: UUID) async throws -> Event? {
+        var events = [Event]()
+        if let querySnapshot = try? await Firestore.firestore().collection("events").whereField("id", isEqualTo: eventId.uuidString).getDocuments(){
+            events = querySnapshot.documents.compactMap { documentSnapshot in
+                try? documentSnapshot.data(as: Event.self)
+            }
+        }
+        if events.isEmpty {
+            return nil
+        }
+        
+        var starts: Date = events[0].starts
+        var ends: Date = events[0].ends
+        for event in events {
+            if event.starts < starts {
+                starts = event.starts
+            }
+            if event.ends > ends {
+                ends = event.ends
+            }
+        }
+        
+        return Event(id: eventId, title: events[0].title, starts: starts, ends: ends, color: events[0].color)
     }
     
     func addListenerForEvent(date: Date, completion: @escaping (_ events: [Event]) -> Void) {

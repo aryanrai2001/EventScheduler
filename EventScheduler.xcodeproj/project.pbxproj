@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		F01FDA0C2C64FBE000FAA5B4 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = F01FDA0B2C64FBE000FAA5B4 /* Event.swift */; };
 		F01FDA112C65083100FAA5B4 /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F01FDA102C65083100FAA5B4 /* CalendarView.swift */; };
-		F01FDA132C65E33900FAA5B4 /* AddNewEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F01FDA122C65E33900FAA5B4 /* AddNewEvent.swift */; };
+		F01FDA132C65E33900FAA5B4 /* AddEventView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F01FDA122C65E33900FAA5B4 /* AddEventView.swift */; };
 		F01FDA182C66347300FAA5B4 /* DataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F01FDA172C66347300FAA5B4 /* DataService.swift */; };
 		F040062C2C64A56400DAE6B6 /* EventSchedulerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F040062B2C64A56400DAE6B6 /* EventSchedulerApp.swift */; };
 		F040062E2C64A56400DAE6B6 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F040062D2C64A56400DAE6B6 /* HomeView.swift */; };
@@ -22,7 +22,7 @@
 /* Begin PBXFileReference section */
 		F01FDA0B2C64FBE000FAA5B4 /* Event.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
 		F01FDA102C65083100FAA5B4 /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
-		F01FDA122C65E33900FAA5B4 /* AddNewEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNewEvent.swift; sourceTree = "<group>"; };
+		F01FDA122C65E33900FAA5B4 /* AddEventView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddEventView.swift; sourceTree = "<group>"; };
 		F01FDA172C66347300FAA5B4 /* DataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataService.swift; sourceTree = "<group>"; };
 		F04006282C64A56400DAE6B6 /* EventScheduler.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EventScheduler.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F040062B2C64A56400DAE6B6 /* EventSchedulerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventSchedulerApp.swift; sourceTree = "<group>"; };
@@ -103,7 +103,7 @@
 			children = (
 				F040062D2C64A56400DAE6B6 /* HomeView.swift */,
 				F01FDA102C65083100FAA5B4 /* CalendarView.swift */,
-				F01FDA122C65E33900FAA5B4 /* AddNewEvent.swift */,
+				F01FDA122C65E33900FAA5B4 /* AddEventView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -186,7 +186,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F01FDA112C65083100FAA5B4 /* CalendarView.swift in Sources */,
-				F01FDA132C65E33900FAA5B4 /* AddNewEvent.swift in Sources */,
+				F01FDA132C65E33900FAA5B4 /* AddEventView.swift in Sources */,
 				F040062E2C64A56400DAE6B6 /* HomeView.swift in Sources */,
 				F01FDA182C66347300FAA5B4 /* DataService.swift in Sources */,
 				F01FDA0C2C64FBE000FAA5B4 /* Event.swift in Sources */,
