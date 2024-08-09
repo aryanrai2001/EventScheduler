@@ -31,11 +31,18 @@ enum EventColor: Codable, CaseIterable {
 }
 
 struct Event: Identifiable, Codable, Hashable  {
-    @DocumentID var id: String?
+    @DocumentID var documentId: String?
+    var id = UUID()
     var title: String
     var starts: Date
     var ends: Date
     var color: EventColor
+    
+    var isAllDay: Bool {
+        let startOfDay = Calendar.current.startOfDay(for: starts)
+        let endOfDay = Calendar.current.date(byAdding: .minute, value: -1, to: Calendar.current.date(byAdding: .day, value: 1, to: startOfDay)!)!
+        return startOfDay == starts && endOfDay == ends
+    }
     
     func hash(into hasher: inout Hasher) {
         hasher.combine(id)

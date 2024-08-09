@@ -65,7 +65,7 @@ struct AddNewEvent: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         Task {
-                            try await DataService.shared.createNewEvent(event: Event(id: UUID().uuidString, title: title, starts: starts, ends: ends, color: color))
+                            try await DataService.shared.createNewEvent(event: Event(title: title, starts: starts, ends: ends, color: color))
                         }
                         showAddEventForm = false
                     } label: {
