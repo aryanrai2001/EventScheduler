@@ -15,6 +15,7 @@ struct CalendarView: View {
     @Binding var compact: Bool
     
     var onPressAdd: () -> Void = {}
+    var onChange: () -> Void = {}
     
     @State private var yearRangeStart: Int = (Int(Date.now.formatted(.dateTime.year()))! / 20) * 20
     
@@ -132,6 +133,7 @@ struct CalendarView: View {
                 Button {
                     withAnimation {
                         self.selectedYear! -= 1
+                        onChange()
                     }
                 } label: {
                     Image(systemName: "chevron.left")
@@ -156,6 +158,7 @@ struct CalendarView: View {
                 Button {
                     withAnimation {
                         self.selectedYear! += 1
+                        onChange()
                     }
                 } label: {
                     Image(systemName: "chevron.right")
@@ -173,6 +176,7 @@ struct CalendarView: View {
                 Button {
                     withAnimation {
                         self.selectedMonth = (selectedMonth + 10) % 12 + 1
+                        onChange()
                     }
                 } label: {
                     Image(systemName: "chevron.left")
@@ -196,6 +200,7 @@ struct CalendarView: View {
                 Button {
                     withAnimation {
                         self.selectedMonth = (selectedMonth + 12)  % 12 + 1
+                        onChange()
                     }
                 } label: {
                     Image(systemName: "chevron.right")
@@ -212,6 +217,7 @@ struct CalendarView: View {
             Button {
                 withAnimation {
                     yearRangeStart -= 20
+                    onChange()
                 }
             } label: {
                 Image(systemName: "chevron.left")
@@ -224,6 +230,7 @@ struct CalendarView: View {
             Button {
                 withAnimation {
                     yearRangeStart += 20
+                    onChange()
                 }
             } label: {
                 Image(systemName: "chevron.right")
@@ -266,6 +273,7 @@ struct CalendarView: View {
                     withAnimation {
                         self.selectedMonth = month
                         self.selectedDay = 1
+                        onChange()
                     }
                 }, label: {
                     Text(Calendar.current.monthSymbols[month-1])
@@ -329,6 +337,7 @@ struct CalendarView: View {
                         Button(action: {
                             withAnimation {
                                 self.selectedDay = Int(day.formatted(.dateTime.day())) ?? 1
+                                onChange()
                             }
                         }, label: {
                             let date = day.formatted(.dateTime.day(.twoDigits))
@@ -367,6 +376,7 @@ struct CalendarView: View {
                                 Button(action: {
                                     withAnimation {
                                         self.selectedDay = Int(day.formatted(.dateTime.day())) ?? 1
+                                        onChange()
                                     }
                                 }, label: {
                                     VStack {

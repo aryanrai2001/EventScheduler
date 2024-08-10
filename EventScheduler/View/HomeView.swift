@@ -11,8 +11,9 @@ import SwiftUI
 final class EventViewModel: ObservableObject {
     
     @Published var events: [Event] = []
+    @Published var offsets: [Int] = []
     
-    func startListening( date: Date?) {
+    func startListening(date: Date?) {
         guard let date else {
             return
         }
@@ -20,8 +21,34 @@ final class EventViewModel: ObservableObject {
         DataService.shared.addListenerForEvent(date: date) { events in
             DispatchQueue.main.async {
                 self.events = events
+                self.offsets = self.calculateEventOffsets(sortedEvents: events)
             }
         }
+    }
+    
+    private func calculateEventOffsets(sortedEvents: [Event]) -> [Int] {
+        var columns: [[Date]] = []
+        var eventColumns: [Int] = []
+        
+        for event in sortedEvents {
+            var placed = false
+            
+            for (index, column) in columns.enumerated() {
+                if column.last! <= event.starts {
+                    columns[index].append(event.ends)
+                    eventColumns.append(index)
+                    placed = true
+                    break
+                }
+            }
+            
+            if !placed {
+                columns.append([event.ends])
+                eventColumns.append(columns.count - 1)
+            }
+        }
+        
+        return eventColumns
     }
 }
 
@@ -36,6 +63,8 @@ struct HomeView: View {
     @State private var selectedMonth: Int? = nil
     @State private var selectedDay: Int = 1
     
+    @State var chartWidth: CGFloat = 100
+    
     @State private var eventToEdit: Event?
     
     var body: some View {
@@ -43,9 +72,11 @@ struct HomeView: View {
         GeometryReader { geometry in
             VStack {
                 
-                CalendarView(selectedYear: $selectedYear, selectedMonth: $selectedMonth, selectedDay: $selectedDay, compact: $compactView) {
+                CalendarView(selectedYear: $selectedYear, selectedMonth: $selectedMonth, selectedDay: $selectedDay, compact: $compactView, onPressAdd: {
                     showAddEventForm = true
-                }
+                }, onChange: {
+                    viewModel.startListening(date: getDate())
+                })
                 .padding([.horizontal, .top])
                 .background {
                     VStack(spacing: 0){
@@ -66,16 +97,6 @@ struct HomeView: View {
                             EventListView(date: getDate()!)
                         }
                     }
-                    .onChange(of: selectedYear) {
-                        viewModel.startListening(date: getDate())
-                    }
-                    .onChange(of: selectedMonth) {
-                        viewModel.startListening(date: getDate())
-                    }
-                    .onChange(of: selectedDay) {
-                        viewModel.startListening(date: getDate())
-                    }
-                    
                 } else {
                     GeometryReader {
                         proxy in
@@ -117,99 +138,101 @@ struct HomeView: View {
                     .position(x: proxy.frame(in: .local).midX, y: proxy.frame(in: .local).midY)
             }
         } else {
-            VStack(alignment: .leading, spacing: 10) {
-                ForEach(viewModel.events) { event in
-                    ZStack(alignment: .leading) {
-                        RoundedRectangle(cornerRadius: 10)
-                            .foregroundColor(event.color.value.opacity(0.6))
-                            .frame(height: 60)
-                        RoundedRectangle(cornerRadius: 10)
-                            .foregroundColor(event.color.value)
-                            .frame(height: 60)
-                            .mask {
-                                ZStack(alignment: .leading) {
-                                    Rectangle()
-                                        .frame(width: 7)
+            ScrollView {
+                VStack(alignment: .leading, spacing: 10) {
+                    ForEach(viewModel.events) { event in
+                        ZStack(alignment: .leading) {
+                            RoundedRectangle(cornerRadius: 10)
+                                .foregroundColor(event.color.value.opacity(0.6))
+                                .frame(height: 60)
+                            RoundedRectangle(cornerRadius: 10)
+                                .foregroundColor(event.color.value)
+                                .frame(height: 60)
+                                .mask {
+                                    ZStack(alignment: .leading) {
+                                        Rectangle()
+                                            .frame(width: 7)
+                                    }
+                                    .frame(maxWidth: .infinity, alignment: .leading)
                                 }
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                            }
-                        HStack {
-                            VStack(alignment: .leading) {
-                                if event.isAllDay {
-                                    HStack(spacing: 5) {
-                                        Image(systemName: "clock")
-                                            .foregroundStyle(.themeLight)
-                                            .font(.caption)
-                                            .bold()
-                                        Text("All Day")
-                                            .foregroundStyle(.themeLight)
-                                            .font(.caption)
-                                            .bold()
+                            HStack {
+                                VStack(alignment: .leading) {
+                                    if event.isAllDay {
+                                        HStack(spacing: 5) {
+                                            Image(systemName: "clock")
+                                                .foregroundStyle(.themeLight)
+                                                .font(.caption)
+                                                .bold()
+                                            Text("All Day")
+                                                .foregroundStyle(.themeLight)
+                                                .font(.caption)
+                                                .bold()
+                                        }
+                                    }
+                                    else {
+                                        HStack(spacing: 5) {
+                                            Image(systemName: "clock")
+                                                .foregroundStyle(.themeLight)
+                                                .font(.caption)
+                                                .bold()
+                                            Text("\(event.starts.formatted(date: .omitted, time: .shortened))")
+                                                .foregroundStyle(.themeLight)
+                                                .font(.caption)
+                                                .bold()
+                                        }
+                                        HStack(spacing: 5)  {
+                                            Image(systemName: "clock")
+                                                .foregroundStyle(.themeLight)
+                                                .font(.caption)
+                                                .bold()
+                                            Text("\(event.ends.formatted(date: .omitted, time: .shortened))")
+                                                .foregroundStyle(.themeLight)
+                                                .font(.caption)
+                                                .bold()
+                                        }
                                     }
                                 }
-                                else {
-                                    HStack(spacing: 5) {
-                                        Image(systemName: "clock")
-                                            .foregroundStyle(.themeLight)
-                                            .font(.caption)
-                                            .bold()
-                                        Text("\(event.starts.formatted(date: .omitted, time: .shortened))")
-                                            .foregroundStyle(.themeLight)
-                                            .font(.caption)
-                                            .bold()
-                                    }
-                                    HStack(spacing: 5)  {
-                                        Image(systemName: "clock")
-                                            .foregroundStyle(.themeLight)
-                                            .font(.caption)
-                                            .bold()
-                                        Text("\(event.ends.formatted(date: .omitted, time: .shortened))")
-                                            .foregroundStyle(.themeLight)
-                                            .font(.caption)
-                                            .bold()
-                                    }
-                                }
-                            }
-                            .padding(.leading, 15)
-                            Spacer()
-                            Text("\(event.title)")
-                                .foregroundStyle(.themeLight)
-                                .padding(.trailing, 15)
-                        }
-                    }
-                    .onTapGesture {
-                        Task {
-                            let fetchedEvent = try await DataService.shared.getEvent(eventId: event.id)
-                            DispatchQueue.main.async {
-                                eventToEdit = fetchedEvent
+                                .padding(.leading, 15)
+                                Spacer()
+                                Text("\(event.title)")
+                                    .foregroundStyle(.themeLight)
+                                    .padding(.trailing, 15)
                             }
                         }
-                    }
-                    .contextMenu {
-                        Button {
+                        .onTapGesture {
                             Task {
                                 let fetchedEvent = try await DataService.shared.getEvent(eventId: event.id)
                                 DispatchQueue.main.async {
                                     eventToEdit = fetchedEvent
                                 }
                             }
-                        } label: {
-                            Label("Edit Event", systemImage: "square.and.pencil")
                         }
-                        
-                        Button(role: .destructive) {
-                            Task {
-                                try await DataService.shared.deleteEvent(eventId: event.id);
+                        .contextMenu {
+                            Button {
+                                Task {
+                                    let fetchedEvent = try await DataService.shared.getEvent(eventId: event.id)
+                                    DispatchQueue.main.async {
+                                        eventToEdit = fetchedEvent
+                                    }
+                                }
+                            } label: {
+                                Label("Edit Event", systemImage: "square.and.pencil")
                             }
-                        } label: {
-                            Label("Delete Event", systemImage: "trash")
+                            
+                            Button(role: .destructive) {
+                                Task {
+                                    try await DataService.shared.deleteEvent(eventId: event.id);
+                                }
+                            } label: {
+                                Label("Delete Event", systemImage: "trash")
+                            }
                         }
+                        .padding(.horizontal)
+                        .shadow(color: event.color.value.opacity(0.2), radius: 5)
                     }
-                    .padding(.horizontal)
-                    .shadow(color: event.color.value.opacity(0.2), radius: 5)
                 }
+                .scrollContentBackground(.hidden)
             }
-            .scrollContentBackground(.hidden)
         }
     }
     
@@ -258,19 +281,14 @@ struct HomeView: View {
                                             let scrollPos = geometry.frame(in: .named("scroll")).origin
                                             let yStart = -20-Int(scrollPos.y)
                                             let yEnd = yStart + 595
-                                            let startTime = getPositionTime(position: yStart)
-                                            let endTime = getPositionTime(position: yEnd)
-                                            let filteredEvents = viewModel.events.filter {
-                                                event in
-                                                return event.starts < endTime && event.ends > startTime
-                                            }
                                             
-                                            ForEach(filteredEvents.indices, id:\.self) {
+                                            ForEach(viewModel.events.indices, id:\.self) {
                                                 index in
-                                                EventIndicatorView(event: filteredEvents[index], xOffset: index, yStart: yStart, yEnd: yEnd)
+                                                
+                                                EventIndicatorView(event: viewModel.events[index], xOffset: viewModel.offsets[index], yStart: yStart, yEnd: yEnd)
                                             }
                                         }
-                                        .frame(width: CGFloat(viewModel.events.count) * 100)
+                                        .frame(width: CGFloat(((viewModel.offsets.max() ?? 0) + 1) * 100))
                                     }
                                     if date == Calendar.current.startOfDay(for: Date.now) {
                                         GeometryReader { geometry in
@@ -355,12 +373,6 @@ struct HomeView: View {
         let hours = Calendar.current.component(.hour, from: time)
         let minutes = Calendar.current.component(.minute, from: time)
         return  max(min((hours * 60 + minutes), 1440), 1)
-    }
-    
-    func getPositionTime(position: Int) -> Date {
-        let hours = position / 60
-        let minutes = position % 60
-        return Calendar.current.date(byAdding: .hour, value: hours, to: Calendar.current.date(byAdding: .minute, value: minutes, to: Calendar.current.startOfDay(for: getDate()!))!)!
     }
     
     func getDate() -> Date? {

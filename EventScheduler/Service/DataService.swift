@@ -113,7 +113,9 @@ final class DataService: ObservableObject {
             let fetchedEvents: [Event] = documents.compactMap { documentSnapshot in
                 try? documentSnapshot.data(as: Event.self)
             }
-            completion(fetchedEvents)
+            completion(fetchedEvents.sorted(by: { event1, event2 in
+                event1.starts < event2.starts
+            }))
         }
     }
 }
