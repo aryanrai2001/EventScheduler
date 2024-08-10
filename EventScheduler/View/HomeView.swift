@@ -79,13 +79,14 @@ struct HomeView: View {
                 })
                 .padding([.horizontal, .top])
                 .background {
-                    VStack(spacing: 0){
-                        Color.themeBackground
-                            .frame(height: compactView ? 197 : 472)
-                        Rectangle().fill(.linearGradient(colors: [Color.themeBackground, Color.clear, Color.clear], startPoint: .top, endPoint: .bottom))
-                            .frame(height: 50)
+                    if compactView {
+                        VStack(spacing: 0){
+                            Color.themeBackground
+                                .frame(height: 175)
+                            Rectangle().fill(.linearGradient(colors: [Color.themeBackground.opacity(0.5), Color.clear], startPoint: .top, endPoint: .bottom))
+                                .frame(height: 50)
+                        }
                     }
-                    .ignoresSafeArea()
                 }
                 .zIndex(100)
                 
@@ -107,13 +108,29 @@ struct HomeView: View {
                             .position(x: proxy.frame(in: .local).midX, y: proxy.frame(in: .local).midY)
                     }
                 }
+                VStack(spacing: 0) {
+                    if compactView {
+                        Rectangle().fill(.linearGradient(colors: [Color.themeBackground.opacity(0.5), Color.clear], startPoint: .bottom, endPoint: .top))
+                            .frame(height: 50)
+                    }
+                    Divider()
+                        .background(.themeForeground)
+                    ZStack {
+                        Color.themeBackground
+                        Button(action: {
+                            setDateToToday()
+                        }, label: {
+                            Text("Today")
+                        })
+                    }
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 50)
+                    .foregroundColor(.themeOrange)
+                }
             }
         }
         .onAppear {
-            selectedYear = Calendar.current.component(.year, from: Date.now)
-            selectedMonth = Calendar.current.component(.month, from: Date.now)
-            selectedDay = Calendar.current.component(.day, from: Date.now)
-            viewModel.startListening(date: getDate())
+            setDateToToday()
         }
         .sheet(isPresented: $showAddEventForm) {
             AddEventView()
@@ -123,7 +140,7 @@ struct HomeView: View {
         } content: { event in
             AddEventView(id: event.id, title: event.title, starts: event.starts, ends: event.ends, color: event.color)
         }
-
+        
     }
     
     @ViewBuilder
@@ -233,6 +250,12 @@ struct HomeView: View {
                 }
                 .scrollContentBackground(.hidden)
             }
+            .scrollClipDisabled()
+            .mask {
+                Rectangle()
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 310)
+            }
         }
     }
     
@@ -279,8 +302,8 @@ struct HomeView: View {
                                         GeometryReader {
                                             geometry in
                                             let scrollPos = geometry.frame(in: .named("scroll")).origin
-                                            let yStart = -20-Int(scrollPos.y)
-                                            let yEnd = yStart + 595
+                                            let yStart = -22-Int(scrollPos.y)
+                                            let yEnd = yStart + 565
                                             
                                             ForEach(viewModel.events.indices, id:\.self) {
                                                 index in
@@ -318,19 +341,15 @@ struct HomeView: View {
                     }
                 }
                 .scrollClipDisabled()
+                .mask(
+                    Rectangle()
+                        .frame(maxWidth: .infinity, alignment: .top)
+                        .frame(height: 600)
+                )
                 .padding(.horizontal)
                 .coordinateSpace(name: "scroll")
             }
-            VStack(spacing: 0) {
-                Rectangle().fill(.linearGradient(colors: [Color.themeBackground.opacity(0.8), Color.clear, Color.clear], startPoint: .bottom, endPoint: .top))
-                    .frame(height: 50)
-                Divider()
-                    .background(.themeForeground)
-                Color.themeBackground
-                    .frame(height: 50)
-            }
         }
-        .ignoresSafeArea()
     }
     
     @ViewBuilder
@@ -377,6 +396,21 @@ struct HomeView: View {
     
     func getDate() -> Date? {
         return Calendar.current.date(from: DateComponents(year: selectedYear, month: selectedMonth, day: selectedDay))
+    }
+    
+    func setDateToToday() {
+        let currentYear = Calendar.current.component(.year, from: Date.now)
+        let currentMonth = Calendar.current.component(.month, from: Date.now)
+        let currentDay = Calendar.current.component(.day, from: Date.now)
+        
+        if selectedYear != currentYear || selectedMonth != currentMonth || selectedDay != currentDay {
+            withAnimation {
+                selectedYear = currentYear
+                selectedMonth = currentMonth
+                selectedDay = currentDay
+            }
+            viewModel.startListening(date: getDate())
+        }
     }
 }
 

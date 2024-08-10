@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct AddEventView: View {
-
+    
     @Environment(\.presentationMode) var presentationMode
     
     @State var id: UUID?

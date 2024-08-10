@@ -50,7 +50,7 @@ struct CalendarView: View {
                                 .font(.title2)
                             YearHeading(selectedYear: selectedYear)
                         }
-                            
+                        
                         Spacer()
                         
                         if compact {
@@ -320,7 +320,7 @@ struct CalendarView: View {
                     }
                 }
                 Divider()
-                .background(.themeForeground)
+                    .background(.themeForeground)
             }
             
             if !compact {
@@ -415,10 +415,10 @@ struct CalendarView: View {
 }
 
 #Preview {
-//    CalendarView(selectedYear: .constant(2001), selectedMonth: .constant(12), selectedDay: .constant(31)) {
-//        print("Preview Test: Add Button Pressed")
-//    }
-//    .padding()
+    //    CalendarView(selectedYear: .constant(2001), selectedMonth: .constant(12), selectedDay: .constant(31)) {
+    //        print("Preview Test: Add Button Pressed")
+    //    }
+    //    .padding()
     HomeView()
         .background(.themeBackground)
 }
