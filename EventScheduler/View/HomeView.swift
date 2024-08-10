@@ -151,7 +151,6 @@ struct HomeView: View {
         } content: { event in
             AddEventView(id: event.id, title: event.title, starts: event.starts, ends: event.ends, color: event.color)
         }
-        
     }
     
     @ViewBuilder
@@ -184,7 +183,16 @@ struct HomeView: View {
                                     }
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                 }
-                            HStack {
+                            HStack(spacing: 25) {
+                                Text("\(event.title)")
+                                    .fixedSize(horizontal: false, vertical: false)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .multilineTextAlignment(.leading)
+                                    .foregroundStyle(.themeLight)
+                                    .padding(.leading, 15)
+                                    .lineLimit(2)
+                                    .font(.body)
+                                
                                 VStack(alignment: .leading) {
                                     if event.isAllDay {
                                         HStack(spacing: 5) {
@@ -206,10 +214,15 @@ struct HomeView: View {
                                                 .font(.caption)
                                                 .bold()
                                             
-                                            Text("\(event.starts.formatted(date: .omitted, time: .shortened))")
+                                            Text("Starts")
                                                 .foregroundStyle(.themeLight)
                                                 .font(.caption)
                                                 .bold()
+                                            
+                                            Text("\(event.starts.formatted(date: .omitted, time: .shortened))")
+                                                .foregroundStyle(.themeLight)
+                                                .font(.caption)
+                                                .fontWeight(.black)
                                         }
                                         HStack(spacing: 5)  {
                                             Image(systemName: "clock")
@@ -217,20 +230,19 @@ struct HomeView: View {
                                                 .font(.caption)
                                                 .bold()
                                             
-                                            Text("\(event.ends.formatted(date: .omitted, time: .shortened))")
+                                            Text("Ends")
                                                 .foregroundStyle(.themeLight)
                                                 .font(.caption)
                                                 .bold()
+                                            
+                                            Text("\(event.ends.formatted(date: .omitted, time: .shortened))")
+                                                .foregroundStyle(.themeLight)
+                                                .font(.caption)
+                                                .fontWeight(.black)
                                         }
                                     }
                                 }
-                                .padding(.leading, 15)
-                                
-                                Spacer()
-                                
-                                Text("\(event.title)")
-                                    .foregroundStyle(.themeLight)
-                                    .padding(.trailing, 15)
+                                .padding(.trailing, 15)
                             }
                         }
                         .onTapGesture {
