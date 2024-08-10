@@ -71,85 +71,93 @@ struct HomeView: View {
     @State private var chartWidth: CGFloat = 100
     
     @State private var eventToEdit: Event?
+    @State private var eventToView: Event?
     
     var body: some View {
-        
-        GeometryReader { geometry in
-            VStack {
-                CalendarView(selectedYear: $selectedYear, selectedMonth: $selectedMonth, selectedDay: $selectedDay, compact: $chartMode, onPressAdd: {
-                    showAddEventForm = true
-                }, onChange: {
-                    viewModel.startListening(date: getDate())
-                })
-                .padding([.horizontal, .top])
-                .background {
-                    if chartMode {
-                        VStack(spacing: 0){
-                            Color.themeBackground
-                                .frame(height: 175)
-                            
-                            Rectangle().fill(.linearGradient(colors: [Color.themeBackground.opacity(0.5), Color.clear], startPoint: .top, endPoint: .bottom))
+        ZStack {
+            GeometryReader { geometry in
+                VStack {
+                    CalendarView(selectedYear: $selectedYear, selectedMonth: $selectedMonth, selectedDay: $selectedDay, compact: $chartMode, onPressAdd: {
+                        showAddEventForm = true
+                    }, onChange: {
+                        viewModel.startListening(date: getDate())
+                    })
+                    .padding([.horizontal, .top])
+                    .background {
+                        if chartMode {
+                            VStack(spacing: 0){
+                                Color.themeBackground
+                                    .frame(height: 175)
+                                
+                                Rectangle().fill(.linearGradient(colors: [Color.themeBackground.opacity(0.5), Color.clear], startPoint: .top, endPoint: .bottom))
+                                    .frame(height: 50)
+                            }
+                        }
+                    }
+                    .zIndex(100)
+                    
+                    if selectedYear != nil && selectedMonth != nil {
+                        Group {
+                            if chartMode {
+                                TimelineView(date: getDate()!)
+                            } else {
+                                EventListView(date: getDate()!)
+                            }
+                        }
+                    } else {
+                        GeometryReader {
+                            proxy in
+                            Text("No date selected!")
+                                .font(.title)
+                                .fontWeight(.light)
+                                .foregroundStyle(.themeForeground)
+                                .position(x: proxy.frame(in: .local).midX, y: proxy.frame(in: .local).midY)
+                        }
+                    }
+                    
+                    VStack(spacing: 0) {
+                        if chartMode {
+                            Rectangle().fill(.linearGradient(colors: [Color.themeBackground.opacity(0.5), Color.clear], startPoint: .bottom, endPoint: .top))
                                 .frame(height: 50)
                         }
-                    }
-                }
-                .zIndex(100)
-                
-                if selectedYear != nil && selectedMonth != nil {
-                    Group {
-                        if chartMode {
-                            TimelineView(date: getDate()!)
-                        } else {
-                            EventListView(date: getDate()!)
-                        }
-                    }
-                } else {
-                    GeometryReader {
-                        proxy in
-                        Text("No date selected!")
-                            .font(.title)
-                            .fontWeight(.light)
-                            .foregroundStyle(.themeForeground)
-                            .position(x: proxy.frame(in: .local).midX, y: proxy.frame(in: .local).midY)
-                    }
-                }
-                
-                VStack(spacing: 0) {
-                    if chartMode {
-                        Rectangle().fill(.linearGradient(colors: [Color.themeBackground.opacity(0.5), Color.clear], startPoint: .bottom, endPoint: .top))
-                            .frame(height: 50)
-                    }
-                    
-                    Divider()
-                        .background(.themeForeground)
-                    
-                    ZStack {
-                        Color.themeBackground
                         
-                        Button(action: {
-                            withAnimation(.timingCurve(.linear, duration: 0.1)) {
-                                setDateToToday()
-                            }
-                        }, label: {
-                            Text("Today")
-                        })
+                        Divider()
+                            .background(.themeForeground)
+                        
+                        ZStack {
+                            Color.themeBackground
+                            
+                            Button(action: {
+                                withAnimation(.timingCurve(.linear, duration: 0.1)) {
+                                    setDateToToday()
+                                }
+                            }, label: {
+                                Text("Today")
+                            })
+                        }
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 50)
+                        .foregroundColor(.themeOrange)
                     }
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 50)
-                    .foregroundColor(.themeOrange)
                 }
             }
-        }
-        .onAppear {
-            setDateToToday()
-        }
-        .sheet(isPresented: $showAddEventForm) {
-            AddEventView()
-        }
-        .sheet(item: $eventToEdit) {
-            eventToEdit = nil
-        } content: { event in
-            AddEventView(id: event.id, title: event.title, starts: event.starts, ends: event.ends, color: event.color)
+            .onAppear {
+                setDateToToday()
+            }
+            .sheet(isPresented: $showAddEventForm) {
+                AddEventView()
+            }
+            .sheet(item: $eventToEdit) {
+                eventToEdit = nil
+            } content: { event in
+                AddEventView(id: event.id, title: event.title, starts: event.starts, ends: event.ends, color: event.color)
+            }
+            .blur(radius: (eventToView != nil) ? 3.0 : 0)
+            
+            if eventToView != nil {
+                EventDetailView(event: $eventToView)
+                    .transition(.scale)
+            }
         }
     }
     
@@ -249,7 +257,9 @@ struct HomeView: View {
                             Task {
                                 let fetchedEvent = try await DataService.shared.getEvent(eventId: event.id)
                                 DispatchQueue.main.async {
-                                    eventToEdit = fetchedEvent
+                                    withAnimation(.timingCurve(.easeInOut, duration: 0.15)) {
+                                        eventToView = fetchedEvent
+                                    }
                                 }
                             }
                         }
@@ -433,12 +443,14 @@ struct HomeView: View {
                 }
             }
             .frame(width: CGFloat(width), height: CGFloat(height))
-            .position(x: CGFloat(xStartPos + width / 2), y: CGFloat(yStartPos + height / 2))
+            .position(x: CGFloat(xStartPos) + CGFloat(width) / 2, y: CGFloat(yStartPos) + CGFloat(height) / 2)
             .onTapGesture {
                 Task {
                     let fetchedEvent = try await DataService.shared.getEvent(eventId: event.id)
                     DispatchQueue.main.async {
-                        eventToEdit = fetchedEvent
+                        withAnimation(.timingCurve(.easeInOut, duration: 0.15)) {
+                            eventToView = fetchedEvent
+                        }
                     }
                 }
             }

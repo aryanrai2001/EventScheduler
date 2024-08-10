@@ -17,6 +17,7 @@
 		F04006332C64A56500DAE6B6 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F04006322C64A56500DAE6B6 /* Preview Assets.xcassets */; };
 		F040063A2C64AC9D00DAE6B6 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = F04006392C64AC9D00DAE6B6 /* GoogleService-Info.plist */; };
 		F040063D2C64ADB200DAE6B6 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = F040063C2C64ADB200DAE6B6 /* FirebaseFirestore */; };
+		F0D739812C67ABD600B6BCD8 /* EventDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D739802C67ABD600B6BCD8 /* EventDetailView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +31,7 @@
 		F040062F2C64A56400DAE6B6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F04006322C64A56500DAE6B6 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		F04006392C64AC9D00DAE6B6 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		F0D739802C67ABD600B6BCD8 /* EventDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDetailView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -104,6 +106,7 @@
 				F040062D2C64A56400DAE6B6 /* HomeView.swift */,
 				F01FDA102C65083100FAA5B4 /* CalendarView.swift */,
 				F01FDA122C65E33900FAA5B4 /* AddEventView.swift */,
+				F0D739802C67ABD600B6BCD8 /* EventDetailView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -191,6 +194,7 @@
 				F01FDA182C66347300FAA5B4 /* DataService.swift in Sources */,
 				F01FDA0C2C64FBE000FAA5B4 /* Event.swift in Sources */,
 				F040062C2C64A56400DAE6B6 /* EventSchedulerApp.swift in Sources */,
+				F0D739812C67ABD600B6BCD8 /* EventDetailView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
