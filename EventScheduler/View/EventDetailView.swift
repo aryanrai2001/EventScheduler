@@ -115,6 +115,9 @@ struct EventDetailView: View {
                             .background(.themeLight)
                         
                         Button(action: {
+                            withAnimation(.timingCurve(.easeInOut, duration: 0.05)) {
+                                self.event = nil
+                            }
                             Task {
                                 try await
                                 DataService.shared.deleteEvent(eventId: event.id);
@@ -131,8 +134,11 @@ struct EventDetailView: View {
                 .shadow(color: .themeForeground.opacity(0.5), radius: 25)
             }
             .sheet(isPresented: $showEditForm, onDismiss: {
-                withAnimation(.timingCurve(.easeInOut, duration: 0.05)) {
-                    self.event = nil
+                Task {
+                    let fetchedEvent = try? await DataService.shared.getEvent(eventId: event.id)
+                    DispatchQueue.main.async {
+                        self.event = fetchedEvent
+                    }
                 }
             }, content: {
                 AddEventView(id: event.id, title: event.title, starts: event.starts, ends: event.ends, color: event.color)
