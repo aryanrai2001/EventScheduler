@@ -26,9 +26,12 @@ struct AddEventView: View {
             List {
                 Section {
                     TextField("Title", text: $title)
+                    
                     HStack {
                         Text("Color")
+                        
                         Spacer()
+                        
                         HStack(spacing: 15) {
                             ForEach(EventColor.allCases, id:\.self) {
                                 color in
@@ -38,6 +41,7 @@ struct AddEventView: View {
                                         .onTapGesture {
                                             self.color = color
                                         }
+                                    
                                     if color == self.color {
                                         Circle()
                                             .stroke(lineWidth: 4)
@@ -52,6 +56,7 @@ struct AddEventView: View {
                 
                 Section {
                     DatePicker("Starts", selection: $starts)
+                    
                     DatePicker("Ends", selection: $ends, in: minEndDate...)
                         .onAppear {
                             ends = minEndDate

@@ -17,11 +17,16 @@ final class EventViewModel: ObservableObject {
         guard let date else {
             return
         }
-        events = []
+        withAnimation(.timingCurve(.linear, duration: 0.05)) {
+            events = []
+            offsets = []
+        }
         DataService.shared.addListenerForEvent(date: date) { events in
             DispatchQueue.main.async {
-                self.events = events
-                self.offsets = self.calculateEventOffsets(sortedEvents: events)
+                withAnimation(.timingCurve(.linear, duration: 0.05)) {
+                    self.events = events
+                    self.offsets = self.calculateEventOffsets(sortedEvents: events)
+                }
             }
         }
     }
@@ -57,13 +62,13 @@ struct HomeView: View {
     @StateObject private var viewModel = EventViewModel()
     
     @State private var showAddEventForm: Bool = false
-    @State private var compactView: Bool = false
+    @State private var chartMode: Bool = false
     
     @State private var selectedYear: Int? = nil
     @State private var selectedMonth: Int? = nil
     @State private var selectedDay: Int = 1
     
-    @State var chartWidth: CGFloat = 100
+    @State private var chartWidth: CGFloat = 100
     
     @State private var eventToEdit: Event?
     
@@ -71,18 +76,18 @@ struct HomeView: View {
         
         GeometryReader { geometry in
             VStack {
-                
-                CalendarView(selectedYear: $selectedYear, selectedMonth: $selectedMonth, selectedDay: $selectedDay, compact: $compactView, onPressAdd: {
+                CalendarView(selectedYear: $selectedYear, selectedMonth: $selectedMonth, selectedDay: $selectedDay, compact: $chartMode, onPressAdd: {
                     showAddEventForm = true
                 }, onChange: {
                     viewModel.startListening(date: getDate())
                 })
                 .padding([.horizontal, .top])
                 .background {
-                    if compactView {
+                    if chartMode {
                         VStack(spacing: 0){
                             Color.themeBackground
                                 .frame(height: 175)
+                            
                             Rectangle().fill(.linearGradient(colors: [Color.themeBackground.opacity(0.5), Color.clear], startPoint: .top, endPoint: .bottom))
                                 .frame(height: 50)
                         }
@@ -92,7 +97,7 @@ struct HomeView: View {
                 
                 if selectedYear != nil && selectedMonth != nil {
                     Group {
-                        if compactView {
+                        if chartMode {
                             TimelineView(date: getDate()!)
                         } else {
                             EventListView(date: getDate()!)
@@ -108,17 +113,23 @@ struct HomeView: View {
                             .position(x: proxy.frame(in: .local).midX, y: proxy.frame(in: .local).midY)
                     }
                 }
+                
                 VStack(spacing: 0) {
-                    if compactView {
+                    if chartMode {
                         Rectangle().fill(.linearGradient(colors: [Color.themeBackground.opacity(0.5), Color.clear], startPoint: .bottom, endPoint: .top))
                             .frame(height: 50)
                     }
+                    
                     Divider()
                         .background(.themeForeground)
+                    
                     ZStack {
                         Color.themeBackground
+                        
                         Button(action: {
-                            setDateToToday()
+                            withAnimation(.timingCurve(.linear, duration: 0.1)) {
+                                setDateToToday()
+                            }
                         }, label: {
                             Text("Today")
                         })
@@ -162,6 +173,7 @@ struct HomeView: View {
                             RoundedRectangle(cornerRadius: 10)
                                 .foregroundColor(event.color.value.opacity(0.6))
                                 .frame(height: 60)
+                            
                             RoundedRectangle(cornerRadius: 10)
                                 .foregroundColor(event.color.value)
                                 .frame(height: 60)
@@ -180,6 +192,7 @@ struct HomeView: View {
                                                 .foregroundStyle(.themeLight)
                                                 .font(.caption)
                                                 .bold()
+                                            
                                             Text("All Day")
                                                 .foregroundStyle(.themeLight)
                                                 .font(.caption)
@@ -192,6 +205,7 @@ struct HomeView: View {
                                                 .foregroundStyle(.themeLight)
                                                 .font(.caption)
                                                 .bold()
+                                            
                                             Text("\(event.starts.formatted(date: .omitted, time: .shortened))")
                                                 .foregroundStyle(.themeLight)
                                                 .font(.caption)
@@ -202,6 +216,7 @@ struct HomeView: View {
                                                 .foregroundStyle(.themeLight)
                                                 .font(.caption)
                                                 .bold()
+                                            
                                             Text("\(event.ends.formatted(date: .omitted, time: .shortened))")
                                                 .foregroundStyle(.themeLight)
                                                 .font(.caption)
@@ -210,7 +225,9 @@ struct HomeView: View {
                                     }
                                 }
                                 .padding(.leading, 15)
+                                
                                 Spacer()
+                                
                                 Text("\(event.title)")
                                     .foregroundStyle(.themeLight)
                                     .padding(.trailing, 15)
@@ -278,9 +295,11 @@ struct HomeView: View {
                                             .bold()
                                             .frame(width: 60, alignment: .leading)
                                             .position(x:35)
+                                        
                                         HStack {
                                             Spacer()
                                                 .frame(width: 70)
+                                            
                                             Rectangle().stroke(style: StrokeStyle(lineWidth: 0.5, lineCap: .butt, lineJoin: .round, dash: [5], dashPhase: 1))
                                                 .frame(height: 0.5)
                                         }
@@ -294,30 +313,42 @@ struct HomeView: View {
                                 }
                                 .padding(.bottom, 51.5)
                             }
+                            
                             HStack {
                                 Spacer()
                                     .frame(width: 70)
+                                
                                 ZStack {
                                     ScrollView(.horizontal, showsIndicators: false) {
                                         GeometryReader {
                                             geometry in
-                                            let scrollPos = geometry.frame(in: .named("scroll")).origin
-                                            let yStart = -22-Int(scrollPos.y)
-                                            let yEnd = yStart + 565
+                                            
+                                            let scrollX = geometry.frame(in: .named("scrollX"))
+                                            
+                                            let xStart = 1-Int(scrollX.origin.x)
+                                            let xEnd = xStart + 289
+                                            
+                                            let scrollY = geometry.frame(in: .named("scrollY"))
+                                            
+                                            let yStart = -22-Int(scrollY.origin.y)
+                                            let yEnd = yStart + 567
                                             
                                             ForEach(viewModel.events.indices, id:\.self) {
                                                 index in
                                                 
-                                                EventIndicatorView(event: viewModel.events[index], xOffset: viewModel.offsets[index], yStart: yStart, yEnd: yEnd)
+                                                EventIndicatorView(event: viewModel.events[index], xOffset: viewModel.offsets[index], xStart: xStart, xEnd: xEnd, yStart: yStart, yEnd: yEnd)
                                             }
                                         }
                                         .frame(width: CGFloat(((viewModel.offsets.max() ?? 0) + 1) * 100))
                                     }
+                                    .coordinateSpace(name: "scrollX")
+                                    
                                     if date == Calendar.current.startOfDay(for: Date.now) {
                                         GeometryReader { geometry in
                                             Circle()
                                                 .frame(width: 10, height: 10)
                                                 .position(x: 0, y: CGFloat(getTimePosition(time: Date.now)))
+                                            
                                             Rectangle()
                                                 .frame(width: geometry.size.width, height: 1)
                                                 .position(x: geometry.frame(in: .local).midX, y: CGFloat(getTimePosition(time: Date.now)))
@@ -330,12 +361,12 @@ struct HomeView: View {
                         
                     }
                     .onAppear {
-                        withAnimation(.easeInOut) {
+                        withAnimation(.timingCurve(.linear, duration: 0.1)) {
                             proxy.scrollTo(hours[12], anchor: .top)
                         }
                     }
                     .onChange(of: date) {
-                        withAnimation(.easeInOut) {
+                        withAnimation(.timingCurve(.linear, duration: 0.1)) {
                             proxy.scrollTo(hours[12], anchor: .top)
                         }
                     }
@@ -347,36 +378,50 @@ struct HomeView: View {
                         .frame(height: 600)
                 )
                 .padding(.horizontal)
-                .coordinateSpace(name: "scroll")
+                .coordinateSpace(name: "scrollY")
             }
         }
     }
     
     @ViewBuilder
-    func EventIndicatorView(event: Event, xOffset: Int, yStart: Int, yEnd: Int) -> some View{
-        let eventStartPos = max(getTimePosition(time: event.starts), yStart)
-        let eventEndPos = min(getTimePosition(time: event.ends), yEnd)
-        let width = 100
-        let height = eventEndPos - eventStartPos
-        if height > 1 {
+    func EventIndicatorView(event: Event, xOffset: Int, xStart: Int, xEnd: Int, yStart: Int, yEnd: Int) -> some View{
+        let cardWidth = 100
+        
+        let yStartPos = max(getTimePosition(time: event.starts), yStart)
+        let yEndPos = min(getTimePosition(time: event.ends), yEnd)
+        let height = yEndPos - yStartPos
+
+        let xStartPos = max(cardWidth * xOffset, xStart)
+        let xEndPos = min(cardWidth * xOffset + cardWidth, xEnd)
+        let width = xEndPos - xStartPos
+        
+        if height > 4  && width > 4{
+            
             ZStack(alignment: .top) {
                 RoundedRectangle(cornerRadius: 5)
-                    .foregroundStyle(event.color.value.opacity(0.5))
+                    .foregroundStyle(event.color.value.opacity(0.8))
+                    .frame(width: CGFloat(width), height: CGFloat(height))
+                
                 RoundedRectangle(cornerRadius: 5)
                     .stroke(lineWidth: 3)
                     .foregroundStyle(event.color.value)
-                if height > 20 {
+                    .frame(width: CGFloat(width-3), height: CGFloat(height-3))
+                
+                if height > 20 && width > 50{
                     Text("\(event.title)")
+                        .fixedSize(horizontal: false, vertical: false)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .multilineTextAlignment(.leading)
+                        .foregroundStyle(.themeLight)
+                        .padding(.horizontal, 5)
+                        .lineLimit(nil)
                         .font(.caption)
                         .bold()
-                        .foregroundStyle(.themeForeground)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(5)
                     
                 }
             }
-            .frame(width: CGFloat(width - 3), height: CGFloat(height))
-            .position(x: CGFloat(width * xOffset + width / 2), y: CGFloat(eventStartPos + height / 2))
+            .frame(width: CGFloat(width), height: CGFloat(height))
+            .position(x: CGFloat(xStartPos + width / 2), y: CGFloat(yStartPos + height / 2))
             .onTapGesture {
                 Task {
                     let fetchedEvent = try await DataService.shared.getEvent(eventId: event.id)
@@ -404,11 +449,9 @@ struct HomeView: View {
         let currentDay = Calendar.current.component(.day, from: Date.now)
         
         if selectedYear != currentYear || selectedMonth != currentMonth || selectedDay != currentDay {
-            withAnimation {
-                selectedYear = currentYear
-                selectedMonth = currentMonth
-                selectedDay = currentDay
-            }
+            selectedYear = currentYear
+            selectedMonth = currentMonth
+            selectedDay = currentDay
             viewModel.startListening(date: getDate())
         }
     }

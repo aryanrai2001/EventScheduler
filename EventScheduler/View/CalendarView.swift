@@ -28,9 +28,12 @@ struct CalendarView: View {
                 if !compact {
                     HStack(alignment: .bottom, spacing: 0) {
                         YearHeading(selectedYear: selectedYear)
+                        
                         Spacer()
+                        
                         HStack {
                             CompactButton()
+                            
                             Button {
                                 onPressAdd()
                             } label: {
@@ -41,13 +44,16 @@ struct CalendarView: View {
                         }
                     }
                 }
+                
                 // Month
                 if let selectedMonth {
                     HStack(alignment: .bottom, spacing: 0) {
                         MonthHeading(selectedMonth: selectedMonth)
+                        
                         if compact {
                             Text(", ")
                                 .font(.title2)
+                            
                             YearHeading(selectedYear: selectedYear)
                         }
                         
@@ -56,6 +62,7 @@ struct CalendarView: View {
                         if compact {
                             HStack {
                                 CompactButton()
+                                
                                 Button {
                                     onPressAdd()
                                 } label: {
@@ -66,6 +73,7 @@ struct CalendarView: View {
                             }
                         }
                     }
+                    
                     //Day
                     DaySelectView()
                         .padding(.top, 10)
@@ -91,7 +99,7 @@ struct CalendarView: View {
     @ViewBuilder
     func CompactButton() -> some View {
         Button {
-            withAnimation {
+            withAnimation(.timingCurve(.linear, duration: 0.1)) {
                 if compact {
                     compact = false
                 } else {
@@ -131,7 +139,7 @@ struct CalendarView: View {
         HStack {
             if selectedMonth == nil {
                 Button {
-                    withAnimation {
+                    withAnimation(.timingCurve(.linear, duration: 0.1)) {
                         self.selectedYear! -= 1
                         onChange()
                     }
@@ -143,7 +151,7 @@ struct CalendarView: View {
             }
             
             Button {
-                withAnimation {
+                withAnimation(.timingCurve(.linear, duration: 0.1)) {
                     self.yearRangeStart = (selectedYear / 20) * 20
                     self.selectedYear = nil
                 }
@@ -156,7 +164,7 @@ struct CalendarView: View {
             
             if selectedMonth == nil {
                 Button {
-                    withAnimation {
+                    withAnimation(.timingCurve(.linear, duration: 0.1)) {
                         self.selectedYear! += 1
                         onChange()
                     }
@@ -174,7 +182,7 @@ struct CalendarView: View {
         HStack {
             if !compact {
                 Button {
-                    withAnimation {
+                    withAnimation(.timingCurve(.linear, duration: 0.1)) {
                         self.selectedMonth = (selectedMonth + 10) % 12 + 1
                         onChange()
                     }
@@ -186,7 +194,7 @@ struct CalendarView: View {
             }
             
             Button {
-                withAnimation {
+                withAnimation(.timingCurve(.linear, duration: 0.1)) {
                     self.selectedMonth = nil
                 }
             } label: {
@@ -198,7 +206,7 @@ struct CalendarView: View {
             
             if !compact {
                 Button {
-                    withAnimation {
+                    withAnimation(.timingCurve(.linear, duration: 0.1)) {
                         self.selectedMonth = (selectedMonth + 12)  % 12 + 1
                         onChange()
                     }
@@ -215,7 +223,7 @@ struct CalendarView: View {
     func YearSelectView() -> some View {
         HStack {
             Button {
-                withAnimation {
+                withAnimation(.timingCurve(.linear, duration: 0.1)) {
                     yearRangeStart -= 20
                     onChange()
                 }
@@ -224,11 +232,13 @@ struct CalendarView: View {
                     .foregroundColor(.themeOrange)
                     .font(.title2)
             }
+            
             Text("\(String(yearRangeStart + 1)) - \(String(yearRangeStart + 20))")
                 .foregroundStyle(.themeForeground)
                 .font(.title2)
+            
             Button {
-                withAnimation {
+                withAnimation(.timingCurve(.linear, duration: 0.1)) {
                     yearRangeStart += 20
                     onChange()
                 }
@@ -238,15 +248,17 @@ struct CalendarView: View {
                     .font(.title2)
             }
         }
+        
         Divider()
             .background(.themeForeground)
             .padding(.vertical, 10)
+        
         VStack {
             LazyVGrid(columns: Array(repeating: GridItem(.fixed(65)), count: 5), spacing: 5, content: {
                 ForEach(1...20, id:\.self) {
                     offset in
                     Button(action: {
-                        withAnimation {
+                        withAnimation(.timingCurve(.linear, duration: 0.1)) {
                             self.selectedYear = yearRangeStart + offset
                             self.selectedMonth = nil
                             self.selectedDay = 1
@@ -266,11 +278,12 @@ struct CalendarView: View {
     func MonthSelectView() -> some View {
         Divider()
             .background(.themeForeground)
+        
         LazyVGrid(columns: Array(repeating: GridItem(.flexible(minimum: 50, maximum: 200)), count: 3), alignment: .leading, spacing: 5, content: {
             ForEach(1...12, id:\.self) {
                 month in
                 Button(action: {
-                    withAnimation {
+                    withAnimation(.timingCurve(.linear, duration: 0.1)) {
                         self.selectedMonth = month
                         self.selectedDay = 1
                         onChange()
@@ -309,6 +322,7 @@ struct CalendarView: View {
             if !compact {
                 Divider()
                     .background(.themeForeground)
+                
                 HStack {
                     ForEach(Calendar.current.weekdaySymbols, id:\.self) {
                         week in
@@ -319,6 +333,7 @@ struct CalendarView: View {
                             .fontWeight(.bold)
                     }
                 }
+                
                 Divider()
                     .background(.themeForeground)
             }
@@ -332,10 +347,11 @@ struct CalendarView: View {
                             .font(.body)
                             .fontWeight(.ultraLight)
                     }
+                    
                     ForEach(days, id:\.self) {
                         day in
                         Button(action: {
-                            withAnimation {
+                            withAnimation(.timingCurve(.linear, duration: 0.1)) {
                                 self.selectedDay = Int(day.formatted(.dateTime.day())) ?? 1
                                 onChange()
                             }
@@ -352,6 +368,7 @@ struct CalendarView: View {
                                 .bold()
                         })
                     }
+                    
                     ForEach(nextMonthDays, id:\.self) { day in
                         Text(day.formatted(.dateTime.day(.twoDigits)))
                             .frame(width: 45)
@@ -363,6 +380,7 @@ struct CalendarView: View {
             }  else {
                 Divider()
                     .background(.themeForeground)
+                
                 ScrollViewReader { proxy in
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack {
@@ -374,7 +392,7 @@ struct CalendarView: View {
                                 let weekDay = Calendar.current.component(.weekday, from: day)
                                 
                                 Button(action: {
-                                    withAnimation {
+                                    withAnimation(.timingCurve(.linear, duration: 0.1)) {
                                         self.selectedDay = Int(day.formatted(.dateTime.day())) ?? 1
                                         onChange()
                                     }
@@ -397,7 +415,7 @@ struct CalendarView: View {
                         }
                         .onChange(of: selectedDay) {
                             DispatchQueue.main.async {
-                                withAnimation(.easeInOut) {
+                                withAnimation(.timingCurve(.linear, duration: 0.1)) {
                                     proxy.scrollTo(selectedDay, anchor: .center)
                                 }
                             }
@@ -415,10 +433,6 @@ struct CalendarView: View {
 }
 
 #Preview {
-    //    CalendarView(selectedYear: .constant(2001), selectedMonth: .constant(12), selectedDay: .constant(31)) {
-    //        print("Preview Test: Add Button Pressed")
-    //    }
-    //    .padding()
     HomeView()
         .background(.themeBackground)
 }
