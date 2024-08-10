@@ -59,7 +59,7 @@ struct AddEventView: View {
                     
                     DatePicker("Ends", selection: $ends, in: minEndDate...)
                         .onAppear {
-                            ends = minEndDate
+                            ends = max(minEndDate, ends)
                         }
                 }
             }
