@@ -110,9 +110,11 @@ final class DataService: ObservableObject {
             guard let documents = querySnapshot?.documents else {
                 return
             }
-            let fetchedEvents: [Event] = documents.compactMap { documentSnapshot in
+            
+            let fetchedEvents = Set<Event>.init(documents.compactMap { documentSnapshot in
                 try? documentSnapshot.data(as: Event.self)
-            }
+            })
+            
             completion(fetchedEvents.sorted(by: { event1, event2 in
                 event1.starts < event2.starts
             }))

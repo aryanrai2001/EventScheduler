@@ -46,9 +46,5 @@ struct Event: Identifiable, Codable, Hashable  {
     
     func hash(into hasher: inout Hasher) {
         hasher.combine(id)
-        hasher.combine(title)
-        hasher.combine(starts)
-        hasher.combine(ends)
-        hasher.combine(color)
     }
 }

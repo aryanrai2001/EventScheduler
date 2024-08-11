@@ -145,7 +145,8 @@ struct HomeView: View {
                 setDateToToday()
             }
             .sheet(isPresented: $showAddEventForm) {
-                AddEventView()
+                let current = getDate() ?? Date.now
+                AddEventView(starts: current, ends: current)
             }
             .sheet(item: $eventToEdit) {
                 eventToEdit = nil
