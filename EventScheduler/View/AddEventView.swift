@@ -17,6 +17,8 @@ struct AddEventView: View {
     @State var ends: Date = Date.now
     @State var color: EventColor = .red
     
+    var onUpdate: (Event) -> Void = { _ in }
+    
     private var minEndDate: Date {
         Calendar.current.date(byAdding: .minute, value: 5, to: starts)!
     }
@@ -83,14 +85,15 @@ struct AddEventView: View {
                                 event.id = id
                             }
                             try await DataService.shared.createNewEvent(event: event)
+                            onUpdate(event)
                         }
                         presentationMode.wrappedValue.dismiss()
                     } label: {
                         if title.isEmpty {
-                            Text(id == nil ? "Add" : "Edit")
+                            Text(id == nil ? "Add" : "Done")
                                 .foregroundStyle(.gray)
                         } else {
-                            Text(id == nil ? "Add" : "Edit")
+                            Text(id == nil ? "Add" : "Done")
                         }
                     }
                     .disabled(title.isEmpty)

@@ -141,7 +141,6 @@ struct CalendarView: View {
                 Button {
                     withAnimation(.timingCurve(.linear, duration: 0.1)) {
                         self.selectedYear! -= 1
-                        onChange()
                     }
                 } label: {
                     Image(systemName: "chevron.left")
@@ -166,7 +165,6 @@ struct CalendarView: View {
                 Button {
                     withAnimation(.timingCurve(.linear, duration: 0.1)) {
                         self.selectedYear! += 1
-                        onChange()
                     }
                 } label: {
                     Image(systemName: "chevron.right")
@@ -225,7 +223,6 @@ struct CalendarView: View {
             Button {
                 withAnimation(.timingCurve(.linear, duration: 0.1)) {
                     yearRangeStart -= 20
-                    onChange()
                 }
             } label: {
                 Image(systemName: "chevron.left")
@@ -240,7 +237,6 @@ struct CalendarView: View {
             Button {
                 withAnimation(.timingCurve(.linear, duration: 0.1)) {
                     yearRangeStart += 20
-                    onChange()
                 }
             } label: {
                 Image(systemName: "chevron.right")

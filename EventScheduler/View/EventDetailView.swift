@@ -26,7 +26,7 @@ struct EventDetailView: View {
                 
                 ZStack {
                     event.color.value
-                    Color.black.opacity(0.2)
+                    Color.black.opacity(0.1)
                     
                     Button(action: {
                         self.event = nil
@@ -131,17 +131,13 @@ struct EventDetailView: View {
                 }
                 .frame(width: 300, height: 475)
                 .cornerRadius(10)
-                .shadow(color: .themeForeground.opacity(0.5), radius: 25)
+                .shadow(color: .themeDark.opacity(0.5), radius: 25)
             }
-            .sheet(isPresented: $showEditForm, onDismiss: {
-                Task {
-                    let fetchedEvent = try? await DataService.shared.getEvent(eventId: event.id)
-                    DispatchQueue.main.async {
-                        self.event = fetchedEvent
-                    }
+            .sheet(isPresented: $showEditForm, content: {
+                AddEventView(id: event.id, title: event.title, starts: event.starts, ends: event.ends, color: event.color) {
+                    updatedEvent in
+                    self.event = updatedEvent
                 }
-            }, content: {
-                AddEventView(id: event.id, title: event.title, starts: event.starts, ends: event.ends, color: event.color)
             })
         }
     }
