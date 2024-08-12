@@ -85,7 +85,9 @@ struct AddEventView: View {
                                 event.id = id
                             }
                             try await DataService.shared.createNewEvent(event: event)
-                            onUpdate(event)
+                            DispatchQueue.main.async {
+                                onUpdate(event)
+                            }
                         }
                         presentationMode.wrappedValue.dismiss()
                     } label: {

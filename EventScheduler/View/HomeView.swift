@@ -156,8 +156,22 @@ struct HomeView: View {
             .blur(radius: (eventToView != nil) ? 3.0 : 0)
             
             if eventToView != nil {
-                EventDetailView(event: $eventToView)
-                    .transition(.scale)
+                Group {
+                    Color.themeDark.opacity(0.2)
+                        .ignoresSafeArea()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .foregroundStyle(.ultraThinMaterial)
+                        .onTapGesture {
+                            withAnimation(.timingCurve(.easeInOut, duration: 0.1)) {
+                                self.eventToView = nil
+                            }
+                        }
+                        .transition(.opacity)
+                    
+                    EventDetailView(event: $eventToView)
+                        .transition(.scale)
+                }
+                .zIndex(1000)
             }
         }
     }
